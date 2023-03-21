@@ -1,6 +1,7 @@
 #ifndef HASHNODE_H
 #define HASHNODE_H
 
+#include <utility>
 
 template <typename K, typename V>
 class HashNode {
@@ -11,15 +12,18 @@ public:
     HashNode(const K& key, const V& value)
         : key_(key), value_(value), next_(nullptr) {}
 
-    K Key() const {
+    const K& Key() const {
         return key_;
     }
 
-    V Value() const {
+    V& Value() {
+        return value_;
+    }
+    const V& Value() const{
         return value_;
     }
 
-    void SetValue(V value) {
+    void SetValue(const V& value) {
         value_ = value;
     }
 

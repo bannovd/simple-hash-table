@@ -94,17 +94,29 @@ public:
 
     V& operator[](const K& key) {
         unsigned long hashValue = hashFunc_(key);
+        HashNode<K, V>* prev = nullptr;
         HashNode<K, V>* entry = table_[hashValue];
         while (entry != nullptr) {
             if (entry->Key() == key) {
                 return entry->Value();
             }
+            prev = entry;
             entry = entry->Next();
         }
-        throw std::out_of_range("Wrong key");
+
+        if (entry == nullptr) {
+            entry = new HashNode<K, V>(key, V());
+            if (prev == nullptr) {
+                table_[hashValue] = entry;
+                ++size_;
+            } else {
+                prev->SetNext(entry);
+            }
+        }
+        return entry->Value();
     }
 
-    const V& operator[](const K& key) const {
+    /*const V& operator[](const K& key) const {
         unsigned long hashValue = hashFunc_(key);
         HashNode<K, V>* entry = table_[hashValue];
         while (entry != nullptr) {
@@ -114,7 +126,7 @@ public:
             entry = entry->Next();
         }
         throw std::out_of_range("Wrong key");
-    }
+    }*/
 private:
     HashNode<K, V>* table_[tableSize];
     HashFunc hashFunc_;

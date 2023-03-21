@@ -34,11 +34,11 @@ int main()
 
     assert(hashTable.size() == 2);
 
-    //hashTable[3] = "3"s;
+    hashTable[3] = "4"s;
     auto result2_2 = hashTable.get(3);
-    assert(result2_2 == "2"s);
+    assert(result2_2 == "4"s);
 
-
+    assert(hashTable.size() == 3);
 
     return 0;
 }

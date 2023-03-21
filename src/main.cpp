@@ -4,8 +4,7 @@
 #include "hashtable.h"
 
 
-using namespace std;
-using namespace string_literals;
+using namespace std::string_literals;
 
 struct TestKeyHash {
     unsigned long operator()(const int& i) const {
@@ -16,22 +15,30 @@ struct TestKeyHash {
 int main()
 {
     HashTable<int, std::string, 10, TestKeyHash> hashTable;
-    hashTable.Insert(1, "1"s);
-    hashTable.Insert(2, "2"s);
-    hashTable.Insert(3, "3"s);
+    hashTable.insert(1, "1"s);
+    hashTable.insert(2, "2"s);
+    hashTable.insert(3, "3"s);
 
-    string value;
-    auto result = hashTable.Get(2);
+    std::string value;
+    auto result = hashTable.get(2);
     assert(result.has_value());
     assert(result.value() == "2"s);
 
-    auto result2 = hashTable.Get(2);
+    auto result2 = hashTable.get(2);
     assert(result2.has_value());
     assert(result2.value() == "2"s);
 
-    hashTable.Remove(3);
-    auto result3 = hashTable.Get(3);
+    hashTable.remove(3);
+    auto result3 = hashTable.get(3);
     assert(!result3.has_value());
+
+    assert(hashTable.size() == 2);
+
+    //hashTable[3] = "3"s;
+    auto result2_2 = hashTable.get(3);
+    assert(result2_2 == "2"s);
+
+
 
     return 0;
 }

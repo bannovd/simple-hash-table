@@ -2,6 +2,7 @@
 #define HASHTABLE_H
 
 #include <optional>
+#include <stdexcept>
 #include "hashnode.h"
 #include "hashutils.h"
 
@@ -12,7 +13,7 @@ public:
     HashTable(const HashTable& other) = delete;
     const HashTable& operator=(const HashTable& other) = delete;
     HashTable()
-        : table_(), hashFunc_() {}
+        : table_(), hashFunc_(), size_(0) {}
 
     ~HashTable() {
         for (size_t i = 0; i < tableSize; ++i) {
@@ -26,7 +27,7 @@ public:
         }
     }
 
-    std::optional<V> Get(const K& key) {
+    std::optional<V> get(const K& key) {
         unsigned long hashValue = hashFunc_(key);
         HashNode<K, V>* entry = table_[hashValue];
         while (entry != nullptr) {
@@ -38,7 +39,7 @@ public:
         return std::nullopt;
     }
 
-    void Insert(const K& key, const V& value) {
+    void insert(const K& key, const V& value) {
         unsigned long hashValue = hashFunc_(key);
         HashNode<K, V>* prev = nullptr;
         HashNode<K, V>* entry = table_[hashValue];
@@ -52,15 +53,17 @@ public:
             entry = new HashNode<K, V>(key, value);
             if (prev == nullptr) {
                 table_[hashValue] = entry;
+                ++size_;
             } else {
                 prev->SetNext(entry);
             }
         } else {
             entry->SetValue(value);
+            ++size_;
         }
     }
 
-    void Remove(const K& key) {
+    void remove(const K& key) {
         unsigned long hashValue = hashFunc_(key);
         HashNode<K, V>* prev = nullptr;
         HashNode<K, V>* entry = table_[hashValue];
@@ -75,15 +78,47 @@ public:
         } else {
             if (prev == nullptr) {
                 table_[hashValue] = entry->Next();
+                --size_;
             } else {
                 prev->SetNext(entry->Next());
             }
             delete entry;
         }
     }
+
+    //auto begin() const;
+    //auto end() const;
+    size_t size() const {
+        return size_;
+    }
+
+    V& operator[](const K& key) {
+        unsigned long hashValue = hashFunc_(key);
+        HashNode<K, V>* entry = table_[hashValue];
+        while (entry != nullptr) {
+            if (entry->Key() == key) {
+                return entry->Value();
+            }
+            entry = entry->Next();
+        }
+        throw std::out_of_range("Wrong key");
+    }
+
+    const V& operator[](const K& key) const {
+        unsigned long hashValue = hashFunc_(key);
+        HashNode<K, V>* entry = table_[hashValue];
+        while (entry != nullptr) {
+            if (entry->Key() == key) {
+                return entry->Value();
+            }
+            entry = entry->Next();
+        }
+        throw std::out_of_range("Wrong key");
+    }
 private:
     HashNode<K, V>* table_[tableSize];
     HashFunc hashFunc_;
+    size_t size_;
 };
 
 #endif // HASHTABLE_H

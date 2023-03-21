@@ -15,7 +15,10 @@ public:
         return key_;
     }
 
-    V Value() const {
+    V& Value() {
+        return value_;
+    }
+    const V& Value() const{
         return value_;
     }
 

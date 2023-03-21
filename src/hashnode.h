@@ -11,7 +11,7 @@ public:
     HashNode(const K& key, const V& value)
         : key_(key), value_(value), next_(nullptr) {}
 
-    K Key() const {
+    const K Key() const {
         return key_;
     }
 

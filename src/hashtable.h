@@ -16,41 +16,41 @@ public:
 
     ~HashTable() {
         for (size_t i = 0; i < tableSize; ++i) {
-            HashNode<K, V> *entry = table_[i];
+            HashNode<K, V>* entry = table_[i];
             while (entry != nullptr) {
-                HashNode<K, V> *prev = entry;
-                entry = entry->getNext();
+                HashNode<K, V>* prev = entry;
+                entry = entry->Next();
                 delete prev;
             }
-            table_[i] = NULL;
+            table_[i] = nullptr;
         }
     }
 
-    std::optional<HashNode<K, V>> Get(const K& key) {
+    std::optional<V> Get(const K& key) {
         unsigned long hashValue = hashFunc_(key);
-        HashNode<K, V> *entry = table_[hashValue];
+        HashNode<K, V>* entry = table_[hashValue];
         while (entry != nullptr) {
             if (entry->Key() == key) {
-                return *entry;
+                return std::make_optional<V>(entry->Value());
             }
             entry = entry->Next();
         }
         return std::nullopt;
     }
 
-    void Insert(const K &key, const V &value) {
+    void Insert(const K& key, const V& value) {
         unsigned long hashValue = hashFunc_(key);
-        HashNode<K, V> *prev = NULL;
-        HashNode<K, V> *entry = table_[hashValue];
+        HashNode<K, V>* prev = nullptr;
+        HashNode<K, V>* entry = table_[hashValue];
 
         while (entry != nullptr && entry->Key() != key) {
             prev = entry;
             entry = entry->Next();
         }
 
-        if (entry == NULL) {
+        if (entry == nullptr) {
             entry = new HashNode<K, V>(key, value);
-            if (prev == NULL) {
+            if (prev == nullptr) {
                 table_[hashValue] = entry;
             } else {
                 prev->SetNext(entry);
@@ -59,7 +59,29 @@ public:
             entry->SetValue(value);
         }
     }
-private:    
+
+    void Remove(const K& key) {
+        unsigned long hashValue = hashFunc_(key);
+        HashNode<K, V>* prev = nullptr;
+        HashNode<K, V>* entry = table_[hashValue];
+
+        while (entry != nullptr && entry->Key() != key) {
+            prev = entry;
+            entry = entry->Next();
+        }
+
+        if (entry == nullptr) {
+            return;
+        } else {
+            if (prev == nullptr) {
+                table_[hashValue] = entry->Next();
+            } else {
+                prev->SetNext(entry->Next());
+            }
+            delete entry;
+        }
+    }
+private:
     HashNode<K, V>* table_[tableSize];
     HashFunc hashFunc_;
 };

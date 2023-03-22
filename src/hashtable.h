@@ -3,6 +3,7 @@
 
 #include <optional>
 #include <stdexcept>
+#include <iterator>
 #include "hashnode.h"
 #include "hashutils.h"
 
@@ -85,8 +86,9 @@ public:
         }
     }
 
-    //auto begin() const;
-    //auto end() const;
+    size_t size() const {
+        return size_;
+    }
 
     V& operator[](const K& key) {
         unsigned long hashValue = hashFunc_(key);
@@ -110,10 +112,6 @@ public:
             }
         }
         return entry->Value();
-    }
-
-    size_t size() const {
-        return size_;
     }
 private:
     HashNode<K, V>* table_[tableSize];

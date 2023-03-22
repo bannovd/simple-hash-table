@@ -20,9 +20,9 @@ int main()
     hashTable.insert(3, "3"s);
 
     std::string value;
-    auto result = hashTable.get(2);
-    assert(result.has_value());
-    assert(result.value() == "2"s);
+    auto result1 = hashTable.get(1);
+    assert(result1.has_value());
+    assert(result1.value() == "1"s);
 
     auto result2 = hashTable.get(2);
     assert(result2.has_value());

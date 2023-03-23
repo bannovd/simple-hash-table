@@ -2,8 +2,6 @@
 #define HASHTABLE_H
 
 #include <optional>
-#include <stdexcept>
-#include <iterator>
 #include "hashnode.h"
 #include "hashutils.h"
 
@@ -28,7 +26,7 @@ public:
         }
     }
 
-    std::optional<V> get(const K& key) {
+    std::optional<V> Get(const K& key) {
         unsigned long hashValue = hashFunc_(key);
         HashNode<K, V>* entry = table_[hashValue];
         while (entry != nullptr) {
@@ -40,7 +38,7 @@ public:
         return std::nullopt;
     }
 
-    void insert(const K& key, const V& value) {
+    const HashNode<K, V>& Insert(const K& key, const V& value) {
         unsigned long hashValue = hashFunc_(key);
         HashNode<K, V>* prev = nullptr;
         HashNode<K, V>* entry = table_[hashValue];
@@ -61,9 +59,10 @@ public:
         } else {
             entry->SetValue(value);
         }
+        return *entry;
     }
 
-    void remove(const K& key) {
+    void Remove(const K& key) {
         unsigned long hashValue = hashFunc_(key);
         HashNode<K, V>* prev = nullptr;
         HashNode<K, V>* entry = table_[hashValue];
@@ -86,7 +85,7 @@ public:
         }
     }
 
-    size_t size() const {
+    size_t Size() const {
         return size_;
     }
 

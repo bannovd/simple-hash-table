@@ -3,6 +3,7 @@
 
 #include <optional>
 #include <stdexcept>
+#include <iterator>
 #include "hashnode.h"
 #include "hashutils.h"
 
@@ -51,15 +52,14 @@ public:
 
         if (entry == nullptr) {
             entry = new HashNode<K, V>(key, value);
+            ++size_;
             if (prev == nullptr) {
                 table_[hashValue] = entry;
-                ++size_;
             } else {
                 prev->SetNext(entry);
             }
         } else {
             entry->SetValue(value);
-            ++size_;
         }
     }
 
@@ -77,17 +77,15 @@ public:
             return;
         } else {
             if (prev == nullptr) {
-                table_[hashValue] = entry->Next();
-                --size_;
+                table_[hashValue] = entry->Next();                
             } else {
                 prev->SetNext(entry->Next());
             }
             delete entry;
+            --size_;
         }
     }
 
-    //auto begin() const;
-    //auto end() const;
     size_t size() const {
         return size_;
     }
@@ -106,27 +104,15 @@ public:
 
         if (entry == nullptr) {
             entry = new HashNode<K, V>(key, V());
+            ++size_;
             if (prev == nullptr) {
-                table_[hashValue] = entry;
-                ++size_;
+                table_[hashValue] = entry;                
             } else {
                 prev->SetNext(entry);
             }
         }
         return entry->Value();
     }
-
-    /*const V& operator[](const K& key) const {
-        unsigned long hashValue = hashFunc_(key);
-        HashNode<K, V>* entry = table_[hashValue];
-        while (entry != nullptr) {
-            if (entry->Key() == key) {
-                return entry->Value();
-            }
-            entry = entry->Next();
-        }
-        throw std::out_of_range("Wrong key");
-    }*/
 private:
     HashNode<K, V>* table_[tableSize];
     HashFunc hashFunc_;
